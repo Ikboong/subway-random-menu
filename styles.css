@@ -7,7 +7,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:"Pretendard","A
 .wrap{max-width:1020px;margin:0 auto;padding:0 20px}
 .topbar{background:var(--green);color:#fff;position:sticky;top:0;z-index:10}
 .topbar-inner{display:flex;justify-content:space-between;align-items:center;padding:14px 20px}
-.logo{font-weight:900;font-size:20px;letter-spacing:.5px}
+.logo{font-weight:900;font-size:20px;letter-spacing:.5px;color:#fff;text-decoration:none}
 .logo span{background:var(--yellow);color:#1d2b1f;border-radius:8px;padding:2px 8px;margin-left:8px;font-size:14px}
 .topbar nav a{color:#fff;text-decoration:none;margin-left:16px;font-size:14px;opacity:.95}
 .topbar nav a:hover{text-decoration:underline}
