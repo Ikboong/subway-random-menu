@@ -64,9 +64,9 @@ async function draw(sharedIdx = null) {
   if (redrawBtn) redrawBtn.disabled = true;
   statusEl.textContent = "🎲 random.org에서 진짜 난수 요청 중…";
   try {
-    // 메뉴 1 + 빵 + 치즈 + 소스2 + 토핑 + 사이즈 + 굽기 + 할라피뇨여부 = 9개
-    const { numbers, source, detail } = await getBaseRandoms(9);
-    const [r0, r1, r2, r3, r4, r5, r6, r7, r8] = numbers;
+    // 메뉴 1 + 빵 + 치즈 + 소스2 + 토핑 + 사이즈 + 굽기 + 야채용 11개 = 20개
+    const { numbers, source, detail } = await getBaseRandoms(20);
+    const [r0, r1, r2, r3, r4, r5, r6, r7, r8, ...rv] = numbers;
 
     const full = $("optFull").checked;
     const menuIdx = sharedIdx !== null ? sharedIdx : r0 % SUBWAY_MENUS.length;
@@ -83,20 +83,35 @@ async function draw(sharedIdx = null) {
     }
     const topping = full ? pick(TOPPINGS, r5) : "추가 없음";
     const toast = r7 % 2 === 0 ? "토스팅 O" : "토스팅 X";
-    let veggie = "전부 다 (기본)";
+    let veggie;
     if ($("optVeggieAll").checked) {
-      veggie = r8 % 3 === 0 ? "전부 다 + 할라피뇨 많이" : r8 % 3 === 1 ? "할라피뇨만 제외하고 전부" : "전부 다";
-    } else {
-      const vcount = 3 + (r8 % 4); // 3~6개
-      const shuffled = [...VEGGIES].sort(() => 0); // 순서고정 후 난수픽
-      const chosen = [];
-      let seed = r8;
-      while (chosen.length < vcount) {
-        const c = shuffled[seed % shuffled.length];
-        if (!chosen.includes(c)) chosen.push(c);
-        seed = (seed * 9301 + 49297) % 233280;
+      // "전부" 기준 + 매번 다르게: 0~2개 랜덤 제외 & 할라피뇨(많이/보통/제외) 랜덤
+      const pool = VEGGIES.filter((v) => v !== "할라피뇨");
+      const dropCount = rv[0] % 3; // 0, 1, 2개 제외
+      const dropped = [];
+      for (const roll of [rv[1], rv[2]]) {
+        if (dropped.length >= dropCount) break;
+        let c = pool[roll % pool.length];
+        if (dropped.includes(c)) c = pool[(roll + 3) % pool.length];
+        if (!dropped.includes(c)) dropped.push(c);
       }
-      veggie = chosen.join(", ");
+      const included = pool.filter((v) => !dropped.includes(v));
+      const jala = rv[3] % 3; // 0: 많이, 1: 제외, 2: 보통
+      if (dropCount === 0 && jala === 2) {
+        veggie = "전부 다";
+      } else {
+        const parts = [...included];
+        if (jala === 0) parts.push("할라피뇨 많이");
+        else if (jala === 2) parts.push("할라피뇨");
+        veggie = parts.join(", ");
+        if (jala === 1) veggie += " (할라피뇨 제외)";
+        if (dropped.length) veggie += ` (${dropped.join(", ")} 제외)`;
+      }
+    } else {
+      // 야채별 독립 추첨 (할라피뇨는 낮은 확률), 최소 2개 보장
+      const weights = [75, 75, 70, 60, 60, 55, 55, 35]; // VEGGIES 순서와 동일
+      veggie = VEGGIES.filter((v, i) => rv[4 + i] % 100 < weights[i]).join(", ");
+      if (!veggie || veggie.split(", ").length < 2) veggie = "양상추, 토마토";
     }
 
     $("rTag").textContent = menu.tag;
