@@ -35,11 +35,6 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:"Pretendard","A
 .spec li{background:#fafcfa;border:1px solid var(--line);border-radius:12px;padding:8px 10px;display:flex;flex-direction:column;gap:2px}
 .spec b{font-size:12px;color:var(--muted)}
 .spec span{font-weight:700}
-.order-script{background:#fff8d6;border-radius:12px;padding:12px;margin:8px 0}
-.order-script p{margin:8px 0;line-height:1.7}
-.meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
-.pill{background:#111;color:#7CFC98;font-size:12px;padding:5px 10px;border-radius:999px}
-.numbers{font-size:12px;color:var(--muted);font-family:monospace}
 .card-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:30px}
 .panel h3{margin-top:0}

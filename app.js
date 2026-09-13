@@ -117,11 +117,6 @@ async function draw(sharedIdx = null) {
     $("rSauce").textContent = sauce;
     $("rTopping").textContent = topping;
     $("rToast").textContent = toast;
-    $("rSource").textContent = "난수 소스: " + source;
-    $("rNumbers").textContent = "난수 [" + numbers.join(", ") + "]";
-
-    const script = `"${menu.ko} ${size}로 주세요. 빵은 ${bread}, 치즈는 ${cheese}, 야채는 ${veggie}, 소스는 ${sauce}${topping !== "추가 없음" ? ", " + topping + " 추가" : ""}해 주세요. ${toast === "토스팅 O" ? "빵은 데워주세요!" : "빵은 그냥 주세요!"}"`;
-    $("rScript").textContent = script;
 
     resultEl.classList.remove("hidden");
     resultEl.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -165,10 +160,6 @@ window.addEventListener("DOMContentLoaded", () => {
   drawBtn.onclick = () => draw();
   redrawBtn.onclick = () => draw();
   $("clearHistoryBtn").onclick = () => { localStorage.removeItem("subway_history"); renderHistory(); };
-  $("copyBtn").onclick = async () => {
-    try { await navigator.clipboard.writeText($("rScript").textContent); statusEl.textContent = "📋 주문 멘트 복사됨!"; }
-    catch { statusEl.textContent = "복사 실패 — 직접 드래그해서 복사해주세요."; }
-  };
   $("shareBtn").onclick = async () => {
     try { await navigator.clipboard.writeText(location.href); statusEl.textContent = "🔗 공유 링크 복사됨!"; }
     catch { statusEl.textContent = "복사 실패 — 주소창 URL을 복사해주세요."; }
