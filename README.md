@@ -6,9 +6,7 @@
 ## 기능
 - 🎲 샌드위치 25종 랜덤 (공식 이미지/설명 사용)
 - 🍞 빵 6종 / 🧀 치즈 4종 / 🥗 야채 / 🧂 소스 14종 중 2개 / ➕ 토핑 / 📏 15cm·30cm / 🔥 굽기까지 풀코스
-- 🗣️ "매장에서 이렇게 말하세요" 주문 멘트 자동 생성 + 복사
 - 📜 뽑기 기록 (localStorage) + 🔗 공유 링크 (`?menu=번호`)
-- 🎲 난수 소스 투명 표기 (random.org JSON-RPC / 공개 API / 폴백)
 
 ## random.org 연동 (3단계 폴백)
 1. `/.netlify/functions/random` → 서버에서 `generateIntegers` JSON-RPC (API키 서버 보관, 권장)
