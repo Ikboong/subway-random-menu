@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>서브웨이 랜덤 메뉴 뽑기 | RANDOM.ORG</title>
+<meta name="description" content="서브웨이 샌드위치 25종 + 빵/치즈/야채/소스까지 random.org 진짜 난수로 뽑아주는 Netlify 웹사이트" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <div class="logo">🥪 SUBWAY<span>RANDOM</span></div>
+    <nav>
+      <a href="https://www.subway.co.kr/menuList/sandwich" target="_blank" rel="noopener">공식 메뉴판 ↗</a>
+      <a href="https://api.random.org/json-rpc/4" target="_blank" rel="noopener">RANDOM.ORG API ↗</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <h1>오늘 뭐 먹지? <br />진짜 난수로 뽑는 서브웨이!</h1>
+    <p>서브웨이 공식 메뉴 25종을 <b>random.org 진짜 난수(True Randomness)</b>로 뽑아줍니다.<br />
+    API 키가 있으면 Netlify Function 경유 JSON-RPC, 없으면 random.org 공개 API → 그래도 안 되면 브라우저 암호화 난수로 자동 폴백됩니다.</p>
+
+    <div class="controls">
+      <label class="check"><input type="checkbox" id="optFull" checked /> 빵·치즈·소스까지 풀코스로 뽑기</label>
+      <label class="check"><input type="checkbox" id="optVeggieAll" checked /> 야채는 기본 전부 (할라피뇨 랜덤)</label>
+    </div>
+
+    <div class="apikey-row">
+      <input id="apiKeyInput" type="password" placeholder="(선택) random.org API 키 입력 — 입력하면 브라우저에서 직접 JSON-RPC 호출" autocomplete="off" />
+      <button id="saveKeyBtn" class="btn ghost" type="button">키 저장</button>
+    </div>
+
+    <button id="drawBtn" class="btn big" type="button">🎲 랜덤 메뉴 뽑기</button>
+    <div id="status" class="status">대기 중… 버튼을 눌러보세요!</div>
+  </section>
+
+  <section id="result" class="result hidden" aria-live="polite">
+    <div class="card">
+      <div class="card-img">
+        <span id="rTag" class="tag">SUBPICK</span>
+        <img id="rImg" src="" alt="서브웨이 메뉴 이미지" />
+      </div>
+      <div class="card-body">
+        <h2 id="rName">-</h2>
+        <p id="rEn" class="en">-</p>
+        <p id="rDesc" class="desc">-</p>
+        <ul class="spec">
+          <li><b>사이즈</b><span id="rSize">-</span></li>
+          <li><b>빵</b><span id="rBread">-</span></li>
+          <li><b>치즈</b><span id="rCheese">-</span></li>
+          <li><b>야채</b><span id="rVeggie">-</span></li>
+          <li><b>소스</b><span id="rSauce">-</span></li>
+          <li><b>추가토핑</b><span id="rTopping">-</span></li>
+          <li><b>굽기</b><span id="rToast">-</span></li>
+        </ul>
+        <div class="order-script">
+          <b>🗣️ 매장에서 이렇게 말하세요</b>
+          <p id="rScript">-</p>
+          <button id="copyBtn" class="btn small" type="button">주문 멘트 복사</button>
+        </div>
+        <div class="meta">
+          <span id="rSource" class="pill">난수 소스: -</span>
+          <span id="rNumbers" class="numbers">-</span>
+        </div>
+        <div class="card-actions">
+          <button id="redrawBtn" class="btn" type="button">다시 뽑기</button>
+          <button id="shareBtn" class="btn ghost" type="button">링크 공유</button>
+          <a class="btn ghost" href="https://www.subway.co.kr/menuList/sandwich" target="_blank" rel="noopener">공식 메뉴 확인</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid2">
+    <div class="panel">
+      <h3>📜 뽑기 기록</h3>
+      <ul id="history"></ul>
+      <button id="clearHistoryBtn" class="btn ghost small" type="button">기록 지우기</button>
+    </div>
+    <div class="panel">
+      <h3>⚙️ random.org 연동 방식</h3>
+      <ol class="how">
+        <li><b>1순위:</b> <code>/.netlify/functions/random</code> → 서버에서 <code>generateIntegers</code> JSON-RPC 호출 (API 키는 Netlify 환경변수 <code>RANDOM_ORG_API_KEY</code>에 보관, 클라이언트 노출 없음)</li>
+        <li><b>2순위:</b> 위 입력칸에 키를 넣으면 브라우저에서 <code>https://api.random.org/json-rpc/4/invoke</code> 직접 호출</li>
+        <li><b>3순위:</b> 키가 없으면 <code>https://www.random.org/integers/</code> 공개 API (키 불필요) 호출</li>
+        <li><b>4순위:</b> 전부 실패하면 <code>crypto.getRandomValues()</code> 폴백 (화면에 소스 표기됨)</li>
+      </ol>
+      <p class="tiny">출처 메뉴: <a href="https://www.subway.co.kr/menuList/sandwich" target="_blank" rel="noopener">subway.co.kr/menuList/sandwich</a> (이미지도 공식 CDN 사용)<br />
+      Netlify 배포: 이 폴더 통째로 드래그-드롭 또는 GitHub 연결 → publish <code>.</code>, functions <code>netlify/functions</code></p>
+    </div>
+  </section>
+
+  <footer>
+    <p>🥪 Subway® 이미지는 subway.co.kr 제공 · 난수는 <a href="https://www.random.org/" target="_blank" rel="noopener">RANDOM.ORG</a> 제공 · 개인 프로젝트 (Netlify 호스팅용)</p>
+  </footer>
+</main>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
