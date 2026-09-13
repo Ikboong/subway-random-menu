@@ -119,6 +119,7 @@ async function draw(sharedIdx = null) {
 
     resultEl.classList.remove("hidden");
     resultEl.scrollIntoView({ behavior: "smooth", block: "start" });
+    statusEl.textContent = "";
     if (detail) console.log("[random]", detail);
 
     saveHistory({ menuIdx, name: menu.ko, size, bread, sauce, at: new Date().toLocaleString() });
