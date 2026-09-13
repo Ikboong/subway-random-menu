@@ -108,7 +108,6 @@ async function draw(sharedIdx = null) {
     $("rImg").alt = menu.ko;
     $("rImg").onerror = () => { $("rImg").src = "https://www.subway.co.kr/images/common/logo.png"; };
     $("rName").textContent = menu.ko;
-    $("rEn").textContent = menu.en;
     $("rDesc").textContent = menu.desc;
     $("rSize").textContent = size;
     $("rBread").textContent = bread;
