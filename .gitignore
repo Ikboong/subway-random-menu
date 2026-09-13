@@ -1,5 +1,8 @@
 .netlify/
 node_modules/
+www/
+android/
 .env
 .DS_Store
+*.apk
 

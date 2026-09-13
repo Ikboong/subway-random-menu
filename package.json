@@ -1,0 +1,30 @@
+{
+  "name": "subway-random-menu",
+  "version": "1.0.0",
+  "description": "서브웨이 공식 메뉴(https://www.subway.co.kr/menuList/sandwich) 25종 + 빵/치즈/야채/소스/토핑을 **random.org 진짜 난수**로 뽑아주는 정적 웹사이트입니다. Netlify에 그대로 배포됩니다.",
+  "main": "app.js",
+  "scripts": {
+    "build:www": "node scripts/copy-www.js",
+    "cap:sync": "npm run build:www && cap sync android",
+    "build:apk": "npm run cap:sync && cd android && gradlew.bat assembleDebug"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ikboong/subway-random-menu.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ikboong/subway-random-menu/issues"
+  },
+  "homepage": "https://github.com/Ikboong/subway-random-menu#readme",
+  "dependencies": {
+    "@capacitor/android": "^6.2.2",
+    "@capacitor/cli": "^6.2.2",
+    "@capacitor/core": "^6.2.2"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5"
+  }
+}

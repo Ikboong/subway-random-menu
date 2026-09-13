@@ -39,6 +39,14 @@ npm i -g netlify-cli
 netlify deploy --prod
 ```
 
+## 안드로이드 APK
+Capacitor로 같은 웹 파일을 감싼 WebView 앱입니다. 앱에서는 Netlify Function 대신 random.org 공개 API로 난수를 가져옵니다.
+```powershell
+npm install
+npm run build:apk   # JDK 17 + Android SDK 필요
+# → android/app/build/outputs/apk/debug/app-debug.apk
+```
+
 ## 파일 구조
 ```
 index.html                  메인 페이지
