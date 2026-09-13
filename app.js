@@ -94,7 +94,14 @@ async function draw(sharedIdx = null) {
         s = (s * 9301 + 49297) % 233280;
       }
     }
-    const veggie = chosenVeggies.join(", ");
+    // 5개 이상 뽑히면 뺄 것만 표시 (짧게 말하려고)
+    let veggie;
+    if (chosenVeggies.length >= 5) {
+      const excluded = VEGGIES.filter((v) => !chosenVeggies.includes(v));
+      veggie = excluded.length === 0 ? "전부 다" : `${excluded.join(", ")} 빼고 전부`;
+    } else {
+      veggie = chosenVeggies.join(", ");
+    }
 
     $("rTag").textContent = menu.tag;
     $("rImg").src = menu.img;
