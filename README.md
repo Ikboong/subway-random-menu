@@ -10,11 +10,10 @@
 - 📜 뽑기 기록 (localStorage) + 🔗 공유 링크 (`?menu=번호`)
 - 🎲 난수 소스 투명 표기 (random.org JSON-RPC / 공개 API / 폴백)
 
-## random.org 연동 (4단계 폴백)
+## random.org 연동 (3단계 폴백)
 1. `/.netlify/functions/random` → 서버에서 `generateIntegers` JSON-RPC (API키 서버 보관, 권장)
-2. 페이지 입력칸에 키 입력 → 브라우저에서 `https://api.random.org/json-rpc/4/invoke` 직접 호출
-3. 키 없음 → `https://www.random.org/integers/` 공개 API (키 불필요)
-4. 전부 실패 → `crypto.getRandomValues()` 폴백 (화면에 표기)
+2. `https://www.random.org/integers/` 공개 API (키 불필요)
+3. 전부 실패 → `crypto.getRandomValues()` 폴백 (화면에 표기)
 
 ## 로컬 실행
 ```powershell
@@ -47,7 +46,7 @@ netlify deploy --prod
 index.html                  메인 페이지
 styles.css                  서브웨이 그린/옐로 테마
 data.js                     메뉴 25종 + 빵/치즈/소스 데이터 (subway.co.kr 기반)
-app.js                      random.org 4단계 폴백 + 뽑기 로직
+app.js                      random.org 3단계 폴백 + 뽑기 로직
 netlify.toml                publish ".", functions "netlify/functions"
 netlify/functions/random.js JSON-RPC 프록시 (API키 숨김)
 ```

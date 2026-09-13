@@ -1,24 +1,12 @@
 /* Subway Random Menu + random.org API
  * 우선순위:
  *  1) /.netlify/functions/random (서버에 RANDOM_ORG_API_KEY 보관, JSON-RPC generateIntegers)
- *  2) 사용자가 입력한 API키 -> https://api.random.org/json-rpc/4/invoke 직접 호출
- *  3) 공개 API https://www.random.org/integers/ (키 불필요)
- *  4) crypto.getRandomValues() 폴백
+ *  2) 공개 API https://www.random.org/integers/ (키 불필요)
+ *  3) crypto.getRandomValues() 폴백
  */
 const $ = (id) => document.getElementById(id);
 const drawBtn = $("drawBtn"), redrawBtn = $("redrawBtn"), statusEl = $("status");
 const resultEl = $("result");
-
-function getSavedKey() {
-  return localStorage.getItem("random_org_key") || "";
-}
-function initKeyInput() {
-  $("apiKeyInput").value = getSavedKey();
-  $("saveKeyBtn").onclick = () => {
-    localStorage.setItem("random_org_key", $("apiKeyInput").value.trim());
-    statusEl.textContent = "API 키 저장됨! 다음 뽑기부터 JSON-RPC 직접 호출을 시도합니다.";
-  };
-}
 
 // --- random.org 호출부 ---
 
@@ -31,26 +19,7 @@ async function viaNetlifyFunction(n, min, max) {
   return { numbers: j.numbers, source: j.source || "random.org via Netlify Function", detail: j.detail || "" };
 }
 
-// 2) 브라우저 -> random.org JSON-RPC 직접 (사용자 키 필요)
-async function viaJsonRpcDirect(n, min, max, apiKey) {
-  const body = {
-    jsonrpc: "2.0",
-    method: "generateIntegers",
-    params: { apiKey, n, min, max, replacement: true, base: 10 },
-    id: Date.now(),
-  };
-  const res = await fetch("https://api.random.org/json-rpc/4/invoke", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) throw new Error("json-rpc http " + res.status);
-  const j = await res.json();
-  if (j.error) throw new Error("random.org: " + (j.error.message || JSON.stringify(j.error)));
-  return { numbers: j.result.random.data, source: "random.org JSON-RPC (브라우저 직접)", detail: `completionTime:${j.result.random.completionTime || ""}` };
-}
-
-// 3) 공개 integers API (키 불필요, CORS 허용됨)
+// 2) 공개 integers API (키 불필요, CORS 허용됨)
 async function viaPublicIntegers(n, min, max) {
   const url = `https://www.random.org/integers/?num=${n}&min=${min}&max=${max}&col=1&base=10&format=plain&rnd=new`;
   const res = await fetch(url);
@@ -60,7 +29,7 @@ async function viaPublicIntegers(n, min, max) {
   return { numbers: text.slice(0, n), source: "random.org 공개 API (integers)", detail: url };
 }
 
-// 4) 최종 폴백
+// 3) 최종 폴백
 function viaCrypto(n, min, max) {
   const arr = new Uint32Array(n);
   crypto.getRandomValues(arr);
@@ -71,7 +40,6 @@ function viaCrypto(n, min, max) {
 // n개의 0~99999 베이스 난수를 받아 각 옵션 길이에 맞게 매핑
 async function getBaseRandoms(count) {
   const N = count, MIN = 0, MAX = 99999;
-  const savedKey = getSavedKey().trim() || $("apiKeyInput").value.trim();
 
   // 1) Netlify Function (로컬 file:// 에서는 실패 -> 다음 단계로)
   try {
@@ -81,17 +49,11 @@ async function getBaseRandoms(count) {
     throw new Error("skip function on file://");
   } catch (e) { console.warn("function fail:", e); }
 
-  // 2) 직접 JSON-RPC
-  if (savedKey) {
-    try { return await viaJsonRpcDirect(N, MIN, MAX, savedKey); }
-    catch (e) { console.warn("jsonrpc fail:", e); }
-  }
-
-  // 3) 공개 API
+  // 2) 공개 API
   try { return await viaPublicIntegers(N, MIN, MAX); }
   catch (e) { console.warn("public fail:", e); }
 
-  // 4) 폴백
+  // 3) 폴백
   return viaCrypto(N, MIN, MAX);
 }
 
@@ -196,7 +158,6 @@ function renderHistory() {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  initKeyInput();
   renderHistory();
   drawBtn.onclick = () => draw();
   redrawBtn.onclick = () => draw();
