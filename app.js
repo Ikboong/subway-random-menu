@@ -68,7 +68,7 @@ async function draw(sharedIdx = null) {
     const { numbers, source, detail } = await getBaseRandoms(20);
     const [r0, r1, r2, r3, r4, r5, r6, r7, r8, ...rv] = numbers;
 
-    const full = $("optFull").checked;
+    const full = true; // 항상 풀코스 (빵·치즈·야채·소스·토핑 전부 추첨)
     const menuIdx = sharedIdx !== null ? sharedIdx : r0 % SUBWAY_MENUS.length;
     const menu = SUBWAY_MENUS[menuIdx];
 
